@@ -9,7 +9,6 @@ import nltk
 from nltk.corpus import stopwords
 import re
 import os
-import pandas as pd
 from IPython.display import display, Markdown
 
 #Lectura y Separación de columnas 
