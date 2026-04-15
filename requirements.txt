@@ -2,4 +2,6 @@ dash
 pandas
 plotly
 gunicorn
-matplotlib
+matplotlib as plt
+WordCloud
+seaborn
