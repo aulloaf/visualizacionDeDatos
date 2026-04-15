@@ -455,4 +455,6 @@ def actualizar(a,b,c,d):
 # ==========================================================
 # RUN
 # ==========================================================
-app.run(debug=True, port=8050)
+port = int(os.environ.get("PORT", 8050))
+
+app.run_server(host="0.0.0.0", port=port)
