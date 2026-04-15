@@ -2,6 +2,9 @@ dash
 pandas
 plotly
 gunicorn
-matplotlib as plt
-WordCloud
+numpy
 seaborn
+wordcloud
+nltk
+pywaffle
+matplotlib
