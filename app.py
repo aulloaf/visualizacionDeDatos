@@ -1,3 +1,17 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.express as px
+from pywaffle import Waffle
+import seaborn as sns
+from wordcloud import WordCloud
+import nltk
+from nltk.corpus import stopwords
+import re
+import os
+import pandas as pd
+from IPython.display import display, Markdown
+
 #Lectura y Separación de columnas 
 
 # ------------------------------------------------------------
