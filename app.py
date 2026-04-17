@@ -329,7 +329,17 @@ def actualizar(a,b,c,d):
         })
 
     cards = [
-        tarjeta(title=" <img src='/assets/mundo.png' width='40'> Salario promedio por país", top_country, "#9b59b6"),
+        tarjeta(
+    titulo=html.Span([
+        html.Img(
+            src="/assets/mundo.png",
+            style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
+        ),
+        "Salario promedio por país"
+    ]),
+    valor=top_country,
+    color="#9b59b6"
+),
         tarjeta("🚀 Mejor Carrera", top_job, "#3498db"),
         tarjeta("💰 Salario Promedio", f"${salario_promedio:,.0f}", "#1abc9c"),
         tarjeta("🏠 % Remoto", f"{pct_remote:.1f}%", "#e67e22"),
