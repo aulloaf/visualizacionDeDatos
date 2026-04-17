@@ -92,11 +92,17 @@ app.layout = html.Div([
     html.P(
         "Nota: todos los salarios mostrados corresponden a montos anuales.",
         style={
+            "background": "rgba(255, 255, 255, 0.18)",   
+            "backdropFilter": "blur(6px)",               
+            "padding": "10px 18px",
+            "borderRadius": "12px",
             "textAlign": "center",
             "fontFamily": FONT,
             "fontSize": "14px",
-            "color": "#e0e0e0",
-            "marginBottom": "25px"
+            "color": "white",
+            "margin": "0 auto 25px auto",
+            "width": "fit-content",
+            "boxShadow": "0 4px 10px rgba(0,0,0,0.25)"
         }
     ),
 
