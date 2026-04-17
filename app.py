@@ -338,19 +338,9 @@ def actualizar(a,b,c,d):
 # ----------------------------------------------------------
 # MAPA
 # ----------------------------------------------------------
- dcc.RadioItems(id="map_mode",
-                options=[
-                        {"label": "🌐 Puntos", "value": "scatter"},
-                        {"label": "🗺️ Coroplético", "value": "choropleth"}
-                        ],
-                value="scatter",
-                inline=True,
-                style={
-                        "color": "white",
-                        "fontFamily": FONT,
-                        "marginBottom": "15px"
-                      }
-               )
+dcc.RadioItems(id="map_mode",options=[ {"label": "🌐 Puntos", "value": "scatter"}, {"label": "🗺️ Coroplético", "value": "choropleth"}],value="scatter", inline=True,style={ "color": "white","fontFamily": FONT,"marginBottom": "15px" } )
+
+
 @app.callback(
     [
         Output("mapa", "figure"),
