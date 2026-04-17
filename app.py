@@ -11,6 +11,14 @@ import re
 import os
 from dash import Dash, html, dcc, Input, Output
 
+
+#Lectura y Separación de columnas 
+
+# ------------------------------------------------------------
+# LEER ARCHIVO (UNA SOLA COLUMNA)
+# ------------------------------------------------------------
+df = pd.read_csv("job_salary_prediction_dataset.csv")
+
 orden_educacion = [
     "High School",
     "Associate",
@@ -24,12 +32,10 @@ df["education_level"] = pd.Categorical(
     ordered=True
 )
 
-#Lectura y Separación de columnas 
-
-# ------------------------------------------------------------
-# LEER ARCHIVO (UNA SOLA COLUMNA)
-# ------------------------------------------------------------
-df = pd.read_csv("job_salary_prediction_dataset.csv")
+df["remote_work"] = df["remote_work"].map({
+    "Si": "Remoto",
+    "No": "Presencial"
+})
 
 # ------------------------------------------------------------
 # TOMAR PRIMERA FILA COMO ENCABEZADO Y SEPARAR
@@ -173,10 +179,7 @@ dcc.Dropdown(
     style={"fontFamily":FONT}
 ),
 
-df["remote_work"] = df["remote_work"].map({
-    "Si": "Remoto",
-    "No": "Presencial"
-})
+
 dcc.Dropdown(
     id="f4",
     options=[{"label":i,"value":i} for i in sorted(df["remote_work"].dropna().unique())],
@@ -335,24 +338,135 @@ def actualizar(a,b,c,d):
 # ----------------------------------------------------------
 # MAPA
 # ----------------------------------------------------------
+ dcc.RadioItems(
+    id="map_mode",
+    options=[
+        {"label": "🌐 Puntos", "value": "scatter"},
+        {"label": "🗺️ Coroplético", "value": "choropleth"}
+    ],
+    value="scatter",
+    inline=True,
+    style={
+        "color": "white",
+        "fontFamily": FONT,
+        "marginBottom": "15px"
+    }
+)
+@app.callback(
+    [
+        Output("mapa", "figure"),
+        Output("g1", "figure"),
+        Output("g2", "figure"),
+        Output("g3", "figure"),
+        Output("g4", "figure"),
+        Output("g5", "figure"),
+        Output("g6", "figure"),
+        Output("g7", "figure"),
+    ],
+    [
+        Input("f1", "value"),   # país
+        Input("f2", "value"),   # carrera
+        Input("f3", "value"),   # educación
+        Input("f4", "value"),   # modalidad
+        Input("map_mode", "value")  # scatter / choropleth
+    ]
+)
+def update_graphs(f1, f2, f3, f4, map_mode):
+
+    # -----------------------------
+    # FILTRADO
+    # -----------------------------
+    dff = df.copy()
+
+    if f1:
+        dff = dff[dff["location"].isin(f1)]
+    if f2:
+        dff = dff[dff["job_title"].isin(f2)]
+    if f3:
+        dff = dff[dff["education_level"].isin(f3)]
+    if f4:
+        dff = dff[dff["remote_work"].isin(f4)]
+
+    # -----------------------------
+    # LEYENDA DE FILTROS
+    # -----------------------------
+    filtros = []
+    if f1: filtros.append(f"🌍 País: {', '.join(f1)}")
+    if f2: filtros.append(f"🤖 Carrera: {', '.join(f2)}")
+    if f3: filtros.append(f"📚 Educación: {', '.join(f3)}")
+    if f4: filtros.append(f"💻 Modalidad: {', '.join(f4)}")
+
+    leyenda = " | ".join(filtros) if filtros else "Sin filtros aplicados"
+
+    # -----------------------------
+    # MAPA
+    # -----------------------------
     country_salary = (
         dff.groupby("location")["salary"]
         .mean()
         .reset_index()
     )
 
-    g_map = px.scatter_geo(
-        country_salary,
-        locations="location",
-        locationmode="country names",
-        size="salary",
-        color="salary",
-        hover_name="location",
-        projection="natural earth",
-        title="🌍 Salario promedio por país",
-        size_max=40,
-        color_continuous_scale="Viridis"
+    if map_mode == "scatter":
+        g_map = px.scatter_geo(
+            country_salary,
+            locations="location",
+            locationmode="country names",
+            size="salary",
+            color="salary",
+            hover_name="location",
+            projection="natural earth",
+            title=f"🛰️ Salario promedio por país<br><sup>{leyenda}</sup>",
+            size_max=40,
+            color_continuous_scale="Viridis"
+        )
+    else:
+        g_map = px.choropleth(
+            country_salary,
+            locations="location",
+            locationmode="country names",
+            color="salary",
+            hover_name="location",
+            projection="natural earth",
+            title=f"🗺️ Salario promedio por país (Coroplético)<br><sup>{leyenda}</sup>",
+            color_continuous_scale="Viridis"
+        )
+
+    g_map.update_layout(
+        font_family=FONT,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        title_font_color="#00eaff"
     )
+
+    # -----------------------------
+    # GRÁFICO 1 – Top carreras
+    # -----------------------------
+    top_jobs = (
+        dff.groupby("job_title")["salary"]
+        .mean()
+        .reset_index()
+        .sort_values("salary", ascending=False)
+        .head(10)
+    )
+
+    g1 = px.bar(
+        top_jobs,
+        x="salary",
+        y="job_title",
+        orientation="h",
+        color="salary",
+        text="salary",
+        title=f"🤖 Top carreras mejor pagadas<br><sup>{leyenda}</sup>"
+    )
+
+    # -----------------------------
+    # AQUÍ VAN TUS OTROS GRÁFICOS
+    # g2, g3, g4, g5, g6, g7
+    # -----------------------------
+
+    return g_map, g1, g2, g3, g4, g5, g6, g7
+
 
 # ----------------------------------------------------------
 # TOP CARRERAS
