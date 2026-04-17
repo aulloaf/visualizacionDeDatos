@@ -4,9 +4,8 @@ import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, Input, Output
 
-# ==========================================================
-# DATA
-# ==========================================================
+
+# Set de datos
 df = pd.read_csv("job_salary_prediction_dataset.csv")
 
 # Orden educación
@@ -38,14 +37,12 @@ for c in ["experience_years", "skills_count", "certifications", "salary"]:
 
 FONT = "Montserrat, sans-serif"
 
-# ==========================================================
+
 # APP
-# ==========================================================
 app = Dash(__name__)
 
-# ==========================================================
+
 # LAYOUT
-# ==========================================================
 app.layout = html.Div([
 
     # HEADER
@@ -213,9 +210,9 @@ app.layout = html.Div([
     "fontFamily": FONT
 })
 
-# ==========================================================
-# CALLBACK FINAL
-# ==========================================================
+
+# CALLBACK
+
 @app.callback(
     [
         Output("cards", "children"),
@@ -255,9 +252,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
     if dff.empty:
         dff = df.copy()
 
-    # -----------------------------
+
     # NOMBRES VARIABLES
-    # -----------------------------
+
     nombres_leyendas = {
         "job_title": "Carrera",
         "location": "País",
@@ -269,9 +266,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
         "industry": "Industria"
     }
 
-    # -----------------------------
+
     # LEYENDA DINÁMICA
-    # -----------------------------
+
     filtros = []
 
     if f1:
@@ -285,10 +282,10 @@ def actualizar(f1, f2, f3, f4, map_mode):
 
     leyenda = " | ".join(filtros) if filtros else "Sin filtros aplicados"
 
-    # -----------------------------
+
     # KPI
-    # -----------------------------
-    salario_promedio = dff["salary"].mean()
+
+    salario_promedio = dff["salary"].mean().round(0)
 
     top_job = (
         dff.groupby("job_title")["salary"]
@@ -362,12 +359,13 @@ def actualizar(f1, f2, f3, f4, map_mode):
         ),
     ]
 
-    # -----------------------------
-    # MAPA (con switch)
-    # -----------------------------
+
+    # MAPAS
+
     country_salary = (
         dff.groupby("location")["salary"]
         .mean()
+        .round(0)
         .reset_index()
     )
 
@@ -396,12 +394,13 @@ def actualizar(f1, f2, f3, f4, map_mode):
             color_continuous_scale="Viridis"
         )
 
-    # -----------------------------
+
     # GRÁFICO 1 – Top carreras
-    # -----------------------------
+
     top_jobs = (
         dff.groupby("job_title")["salary"]
         .mean()
+        .round(0)
         .reset_index()
         .sort_values("salary", ascending=False)
         .head(10)
@@ -422,12 +421,13 @@ def actualizar(f1, f2, f3, f4, map_mode):
         yaxis_title="Carrera"
     )
 
-    # -----------------------------
+
     # GRÁFICO 2 – Experiencia
-    # -----------------------------
+
     df_exp = (
         dff.groupby("experience_years")["salary"]
         .mean()
+        .round(0)
         .reset_index()
     )
 
@@ -444,9 +444,8 @@ def actualizar(f1, f2, f3, f4, map_mode):
         yaxis_title="Salario Anual"
     )
 
-    # -----------------------------
     # GRÁFICO 3 – Educación
-    # -----------------------------
+
     g3 = px.box(
         dff,
         x="education_level",
@@ -481,6 +480,7 @@ def actualizar(f1, f2, f3, f4, map_mode):
     df_industry = (
         dff.groupby("industry")["salary"]
         .mean()
+        .round(0)
         .reset_index()
     )
 
