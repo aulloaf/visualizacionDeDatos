@@ -79,18 +79,44 @@ app.layout = html.Div([
 # ----------------------------------------------------------
 # HEADER
 # ----------------------------------------------------------
-html.H1(
-    "🚀 Mi Futuro Tech",
-    style={
-        "textAlign":"center",
-        "fontFamily":FONT,
-        "fontWeight":"800",
-        "fontSize":"44px",
-        "color":"white",
-        "textShadow":"2px 2px 8px rgba(0,0,0,.35)",
-        "marginBottom":"5px"
-    }
-),
+# html.H1(
+   # "🚀 Mi Futuro Tech",
+   # style={
+       # "textAlign":"center",
+        # "fontFamily":FONT,
+       # "fontWeight":"800",
+      #  "fontSize":"44px",
+     #   "color":"white",
+    #    "textShadow":"2px 2px 8px rgba(0,0,0,.35)",
+   #     "marginBottom":"5px"
+  #  }
+ # ),
+html.Div([
+    html.Img(
+        src="/assets/futurista.png",
+        style={
+            "width": "60px",
+            "marginRight": "12px",
+            "filter": "drop-shadow(0 0 10px #00eaff)"
+        }
+    ),
+    html.H1(
+        "Mi Futuro Tech",
+        style={
+            "fontFamily": FONT,
+            "fontWeight": "800",
+            "fontSize": "44px",
+            "color": "white",
+            "textShadow": "2px 2px 8px rgba(0,0,0,.35)",
+            "margin": "0"
+        }
+    )
+], style={
+    "display": "flex",
+    "justifyContent": "center",
+    "alignItems": "center",
+    "marginBottom": "5px"
+}),
 
 html.P(
     "Descubre carreras, empleabilidad e ingresos para decidir mejor tu futuro",
