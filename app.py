@@ -25,8 +25,9 @@ df["education_level"] = pd.Categorical(
 
 # Modalidad remoto/presencial
 df["remote_work"] = df["remote_work"].map({
-    "Si": "Remoto",
-    "No": "Presencial"
+    "Yes": "Remoto",
+    "No": "Presencial",
+    "Hybrid": "Hibrido"
 })
 df["remote_work"] = df["remote_work"].fillna("Desconocido")
 
@@ -139,7 +140,14 @@ app.layout = html.Div([
         "marginBottom": "10px"
     }),
 
-    # SWITCH MAPA
+    # KPI
+    html.Div(id="cards", style={
+        "display": "grid",
+        "gridTemplateColumns": "repeat(4,1fr)",
+        "gap": "14px",
+        "marginBottom": "20px"
+    }),
+        # SWITCH MAPA
     html.Div([
         dcc.RadioItems(
             id="map_mode",
@@ -156,14 +164,6 @@ app.layout = html.Div([
             }
         )
     ]),
-
-    # KPI
-    html.Div(id="cards", style={
-        "display": "grid",
-        "gridTemplateColumns": "repeat(4,1fr)",
-        "gap": "14px",
-        "marginBottom": "20px"
-    }),
 
     # MAPA
     dcc.Graph(id="g_map", style={"height": "620px"}),
@@ -198,7 +198,7 @@ app.layout = html.Div([
     ], style={"marginTop": "10px"})
 
 ], style={
-    "backgroundImage": "url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=1800&q=80')",
+    "backgroundImage": "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1800&q=80')",
     "backgroundSize": "cover",
     "backgroundPosition": "center",
     "backgroundRepeat": "no-repeat",
@@ -208,7 +208,7 @@ app.layout = html.Div([
 })
 
 # ==========================================================
-# CALLBACK
+# CALLBACK FINAL
 # ==========================================================
 @app.callback(
     [
@@ -232,6 +232,9 @@ app.layout = html.Div([
 )
 def actualizar(f1, f2, f3, f4, map_mode):
 
+    # -----------------------------
+    # FILTRADO
+    # -----------------------------
     dff = df.copy()
 
     if f1:
@@ -246,15 +249,39 @@ def actualizar(f1, f2, f3, f4, map_mode):
     if dff.empty:
         dff = df.copy()
 
-    # LEYENDA FILTROS
+    # -----------------------------
+    # NOMBRES VARIABLES
+    # -----------------------------
+    nombres_leyendas = {
+        "job_title": "Carrera",
+        "location": "País",
+        "education_level": "Nivel Educativo",
+        "remote_work": "Modalidad",
+        "salary": "Salario Anual",
+        "experience_years": "Años de Experiencia",
+        "skills_count": "Cantidad de Habilidades",
+        "industry": "Industria"
+    }
+
+    # -----------------------------
+    # LEYENDA DINÁMICA
+    # -----------------------------
     filtros = []
-    if f1: filtros.append(f"🎓 Carrera: {', '.join(f1)}")
-    if f2: filtros.append(f"🌍 País: {', '.join(f2)}")
-    if f3: filtros.append(f"📚 Educación: {', '.join(f3)}")
-    if f4: filtros.append(f"💻 Modalidad: {', '.join(f4)}")
+
+    if f1:
+        filtros.append(f"🎓 {nombres_leyendas['job_title']}: {', '.join(f1)}")
+    if f2:
+        filtros.append(f"🌍 {nombres_leyendas['location']}: {', '.join(f2)}")
+    if f3:
+        filtros.append(f"📚 {nombres_leyendas['education_level']}: {', '.join(f3)}")
+    if f4:
+        filtros.append(f"💻 {nombres_leyendas['remote_work']}: {', '.join(f4)}")
+
     leyenda = " | ".join(filtros) if filtros else "Sin filtros aplicados"
 
+    # -----------------------------
     # KPI
+    # -----------------------------
     salario_promedio = dff["salary"].mean()
 
     top_job = (
@@ -279,6 +306,7 @@ def actualizar(f1, f2, f3, f4, map_mode):
         .mean() * 100
     )
 
+    # Función tarjeta
     def tarjeta(titulo, valor, color):
         return html.Div([
             html.H4(titulo, style={"marginBottom": "8px", "color": "white"}),
@@ -292,13 +320,11 @@ def actualizar(f1, f2, f3, f4, map_mode):
             "boxShadow": "0 4px 10px rgba(0,0,0,.25)"
         })
 
+    # Tarjetas PNG futuristas
     cards = [
         tarjeta(
             html.Span([
-                html.Img(
-                    src="/assets/salario.png",
-                    style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
-                ),
+                html.Img(src="/assets/salario.png", style={"width": "32px", "marginRight": "8px"}),
                 "Salario Promedio Anual"
             ]),
             f"${salario_promedio:,.0f}",
@@ -306,10 +332,7 @@ def actualizar(f1, f2, f3, f4, map_mode):
         ),
         tarjeta(
             html.Span([
-                html.Img(
-                    src="/assets/carrera.png",
-                    style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
-                ),
+                html.Img(src="/assets/carrera.png", style={"width": "32px", "marginRight": "8px"}),
                 "Mejor Carrera"
             ]),
             top_job,
@@ -317,10 +340,7 @@ def actualizar(f1, f2, f3, f4, map_mode):
         ),
         tarjeta(
             html.Span([
-                html.Img(
-                    src="/assets/mundo.png",
-                    style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
-                ),
+                html.Img(src="/assets/mundo.png", style={"width": "32px", "marginRight": "8px"}),
                 "Mejor País"
             ]),
             top_country,
@@ -328,10 +348,7 @@ def actualizar(f1, f2, f3, f4, map_mode):
         ),
         tarjeta(
             html.Span([
-                html.Img(
-                    src="/assets/remoto.png",
-                    style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
-                ),
+                html.Img(src="/assets/remoto.png", style={"width": "32px", "marginRight": "8px"}),
                 "% Remoto"
             ]),
             f"{pct_remote:.1f}%",
@@ -339,7 +356,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
         ),
     ]
 
-    # MAPA
+    # -----------------------------
+    # MAPA (con switch)
+    # -----------------------------
     country_salary = (
         dff.groupby("location")["salary"]
         .mean()
@@ -371,7 +390,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
             color_continuous_scale="Viridis"
         )
 
-    # TOP CARRERAS
+    # -----------------------------
+    # GRÁFICO 1 – Top carreras
+    # -----------------------------
     top_jobs = (
         dff.groupby("job_title")["salary"]
         .mean()
@@ -387,10 +408,17 @@ def actualizar(f1, f2, f3, f4, map_mode):
         orientation="h",
         color="salary",
         text="salary",
-        title=f"🤖 Top carreras mejor pagadas (salario anual)<br><sup>{leyenda}</sup>"
+        title=f"🤖 Top carreras mejor pagadas<br><sup>{leyenda}</sup>"
     )
 
-    # EXPERIENCIA
+    g1.update_layout(
+        xaxis_title="Salario Anual",
+        yaxis_title="Carrera"
+    )
+
+    # -----------------------------
+    # GRÁFICO 2 – Experiencia
+    # -----------------------------
     df_exp = (
         dff.groupby("experience_years")["salary"]
         .mean()
@@ -405,17 +433,31 @@ def actualizar(f1, f2, f3, f4, map_mode):
         title=f"📈 Experiencia e impacto en el salario anual<br><sup>{leyenda}</sup>"
     )
 
-    # EDUCACIÓN
+    g2.update_layout(
+        xaxis_title="Años de Experiencia",
+        yaxis_title="Salario Anual"
+    )
+
+    # -----------------------------
+    # GRÁFICO 3 – Educación
+    # -----------------------------
     g3 = px.box(
         dff,
         x="education_level",
         y="salary",
         color="education_level",
         category_orders={"education_level": orden_educacion},
-        title=f"🎓 Impacto del nivel educativo en el salario anual<br><sup>{leyenda}</sup>"
+        title=f"🎓 Impacto del nivel educativo<br><sup>{leyenda}</sup>"
     )
 
-    # MODALIDAD PIE
+    g3.update_layout(
+        xaxis_title="Nivel Educativo",
+        yaxis_title="Salario Anual"
+    )
+
+    # -----------------------------
+    # GRÁFICO 4 – Modalidad Pie
+    # -----------------------------
     df_pie = dff["remote_work"].value_counts().reset_index()
     df_pie.columns = ["modalidad", "cantidad"]
 
@@ -427,7 +469,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
         title=f"🏠 Modalidades de trabajo<br><sup>{leyenda}</sup>"
     )
 
-    # INDUSTRIA TREEMAP
+    # -----------------------------
+    # GRÁFICO 5 – Industria Treemap
+    # -----------------------------
     df_industry = (
         dff.groupby("industry")["salary"]
         .mean()
@@ -443,7 +487,9 @@ def actualizar(f1, f2, f3, f4, map_mode):
         title=f"🏭 Salario anual por industria<br><sup>{leyenda}</sup>"
     )
 
-    # HABILIDADES
+    # -----------------------------
+    # GRÁFICO 6 – Habilidades
+    # -----------------------------
     df_skills = (
         dff.groupby("skills_count")
         .agg(
@@ -461,7 +507,14 @@ def actualizar(f1, f2, f3, f4, map_mode):
         title=f"🧠 Habilidades e impacto en el salario anual<br><sup>{leyenda}</sup>"
     )
 
-    # MODALIDAD BOX
+    g6.update_layout(
+        xaxis_title="Cantidad de Habilidades",
+        yaxis_title="Salario Promedio Anual"
+    )
+
+    # -----------------------------
+    # GRÁFICO 7 – Modalidad Box
+    # -----------------------------
     g7 = px.box(
         dff,
         x="remote_work",
@@ -470,7 +523,14 @@ def actualizar(f1, f2, f3, f4, map_mode):
         title=f"💻 Salario anual según modalidad<br><sup>{leyenda}</sup>"
     )
 
+    g7.update_layout(
+        xaxis_title="Modalidad",
+        yaxis_title="Salario Anual"
+    )
+
+    # -----------------------------
     # ESTILO GENERAL
+    # -----------------------------
     figs = [g_map, g1, g2, g3, g4, g5, g6, g7]
 
     for fig in figs:
