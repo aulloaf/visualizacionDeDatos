@@ -329,17 +329,7 @@ def actualizar(a,b,c,d):
         })
 
     cards = [
-        tarjeta(
-    titulo=html.Span([
-        html.Img(
-            src="/assets/mundo.png",
-            style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}
-        ),
-        "Salario promedio por país"
-    ]),
-    valor=top_country,
-    color="#9b59b6"
-),
+        tarjeta(titulo=html.Span([html.Img(src="/assets/mundo.png",style={"width": "32px", "marginRight": "8px", "verticalAlign": "middle"}),"Salario promedio por país"]),valor=top_country,color="#9b59b6"),
         tarjeta("🚀 Mejor Carrera", top_job, "#3498db"),
         tarjeta("💰 Salario Promedio", f"${salario_promedio:,.0f}", "#1abc9c"),
         tarjeta("🏠 % Remoto", f"{pct_remote:.1f}%", "#e67e22"),
@@ -348,20 +338,19 @@ def actualizar(a,b,c,d):
 # ----------------------------------------------------------
 # MAPA
 # ----------------------------------------------------------
- dcc.RadioItems(
-    id="map_mode",
-    options=[
-        {"label": "🌐 Puntos", "value": "scatter"},
-        {"label": "🗺️ Coroplético", "value": "choropleth"}
-    ],
-    value="scatter",
-    inline=True,
-    style={
-        "color": "white",
-        "fontFamily": FONT,
-        "marginBottom": "15px"
-    }
-)
+ dcc.RadioItems(id="map_mode",
+                options=[
+                        {"label": "🌐 Puntos", "value": "scatter"},
+                        {"label": "🗺️ Coroplético", "value": "choropleth"}
+                        ],
+                value="scatter",
+                inline=True,
+                style={
+                        "color": "white",
+                        "fontFamily": FONT,
+                        "marginBottom": "15px"
+                      }
+               )
 @app.callback(
     [
         Output("mapa", "figure"),
