@@ -324,14 +324,6 @@ def actualizar(f1, f2, f3, f4, map_mode):
     cards = [
         tarjeta(
             html.Span([
-                html.Img(src="/assets/salario.png", style={"width": "32px", "marginRight": "8px"}),
-                "Salario Promedio Anual"
-            ]),
-            f"${salario_promedio:,.0f}",
-            "#00eaff"
-        ),
-        tarjeta(
-            html.Span([
                 html.Img(src="/assets/carrera.png", style={"width": "32px", "marginRight": "8px"}),
                 "Mejor Carrera"
             ]),
@@ -345,6 +337,14 @@ def actualizar(f1, f2, f3, f4, map_mode):
             ]),
             top_country,
             "#00ff9d"
+        ),
+        tarjeta(
+            html.Span([
+                html.Img(src="/assets/salario.png", style={"width": "32px", "marginRight": "8px"}),
+                "Salario Promedio Anual"
+            ]),
+            f"${salario_promedio:,.0f}",
+            "#00eaff"
         ),
         tarjeta(
             html.Span([
