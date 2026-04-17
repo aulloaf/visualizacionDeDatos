@@ -198,7 +198,7 @@ app.layout = html.Div([
     ], style={"marginTop": "10px"})
 
 ], style={
-    "backgroundImage": "url('/assets/fondo.jpeg')",
+    "backgroundImage": "url('/assets/fondo1.jpeg')",
     "backgroundSize": "cover",
     "backgroundPosition": "center",
     "backgroundRepeat": "no-repeat",
