@@ -198,7 +198,7 @@ app.layout = html.Div([
     ], style={"marginTop": "10px"})
 
 ], style={
-    "backgroundImage": "url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=1800&q=80')",
+    "backgroundImage": "url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80')",
     "backgroundSize": "cover",
     "backgroundPosition": "center",
     "backgroundRepeat": "no-repeat",
