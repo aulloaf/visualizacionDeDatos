@@ -11,6 +11,19 @@ import re
 import os
 from dash import Dash, html, dcc, Input, Output
 
+orden_educacion = [
+    "High School",
+    "Associate",
+    "Bachelor",
+    "Master",
+    "PhD"
+]
+df["education_level"] = pd.Categorical(
+    df["education_level"],
+    categories=orden_educacion,
+    ordered=True
+)
+
 #Lectura y Separación de columnas 
 
 # ------------------------------------------------------------
@@ -151,18 +164,6 @@ dcc.Dropdown(
     placeholder="🌍 País",
     style={"fontFamily":FONT}
 ),
-orden_educacion = [
-    "High School",
-    "Associate",
-    "Bachelor",
-    "Master",
-    "PhD"
-]
-df["education_level"] = pd.Categorical(
-    df["education_level"],
-    categories=orden_educacion,
-    ordered=True
-)
 
 dcc.Dropdown(
     id="f3",
