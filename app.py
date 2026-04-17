@@ -151,15 +151,31 @@ dcc.Dropdown(
     placeholder="🌍 País",
     style={"fontFamily":FONT}
 ),
+orden_educacion = [
+    "High School",
+    "Associate",
+    "Bachelor",
+    "Master",
+    "PhD"
+]
+df["education_level"] = pd.Categorical(
+    df["education_level"],
+    categories=orden_educacion,
+    ordered=True
+)
 
 dcc.Dropdown(
     id="f3",
-    options=[{"label":i,"value":i} for i in sorted(df["education_level"].dropna().unique())],
+    options=[{"label":i,"value":i} for i in orden_educacion],
     multi=True,
     placeholder="📚 Educación",
     style={"fontFamily":FONT}
 ),
 
+df["remote_work"] = df["remote_work"].map({
+    "Si": "Remoto",
+    "No": "Presencial"
+})
 dcc.Dropdown(
     id="f4",
     options=[{"label":i,"value":i} for i in sorted(df["remote_work"].dropna().unique())],
@@ -309,9 +325,9 @@ def actualizar(a,b,c,d):
         })
 
     cards = [
-        tarjeta("💰 Salario Promedio", f"${salario_promedio:,.0f}", "#1abc9c"),
+        tarjeta(title=" <img src='/assets/mundo.png' width='40'> Salario promedio por país", top_country, "#9b59b6"),
         tarjeta("🚀 Mejor Carrera", top_job, "#3498db"),
-        tarjeta("🌍 Mejor País", top_country, "#9b59b6"),
+        tarjeta("💰 Salario Promedio", f"${salario_promedio:,.0f}", "#1abc9c"),
         tarjeta("🏠 % Remoto", f"{pct_remote:.1f}%", "#e67e22"),
     ]
 
