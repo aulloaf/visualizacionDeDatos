@@ -87,7 +87,7 @@ app.layout = html.Div([
     ),
 
     html.P(
-        "Nota: todos los salarios mostrados corresponden a montos anuales.",
+        "Nota: todos los salarios mostrados corresponden a montos anuales en USD (dólar).",
         style={
             "background": "rgba(255, 255, 255, 0.18)",   
             "backdropFilter": "blur(6px)",               
